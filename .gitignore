@@ -1,0 +1,5 @@
+.vscode
+.env
+layers/collector_common/python/lib
+layers/wheels
+layers/zips
