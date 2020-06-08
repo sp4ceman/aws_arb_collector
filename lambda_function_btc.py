@@ -12,15 +12,18 @@ def lambda_handler(event, context):
     # define cryptowatch endpoints for exchanges
     kraken = "https://api.cryptowat.ch/markets/kraken/btceur/summary"
     luno = "https://api.cryptowat.ch/markets/luno/btczar/summary"
+    valr = "https://api.valr.com/v1/public/marketsummary"
 
     # ret responses
     resp_luno = requests.get(luno)
     resp_kraken = requests.get(kraken)
+    resp_valr = requests.get(valr)
     
 
     # format responses
     json_luno = f.formatter(resp_luno, timestamp)
     json_kraken = f.formatter(resp_kraken, timestamp)
+    json_valr = f.valrformatter(resp_valr, timestamp)
     # print(json_luno)
     # print(json_kraken)
 
@@ -35,6 +38,7 @@ def lambda_handler(event, context):
     table = dynamodb.Table('arbitrator-btc-hist-minutely')
     f.ddb_btc_updater_minutely(table, timestamp.replace(second=0, microsecond=0), "luno", json_luno)
     f.ddb_btc_updater_minutely(table, timestamp.replace(second=0, microsecond=0), "kraken", json_kraken)
+    f.ddb_btc_updater_minutely(table, timestamp.replace(second=0, microsecond=0), "valr", json_valr)
     
     return {
         'statusCode': 200,
